@@ -86,6 +86,15 @@ class _EmployeeFormState extends State<EmployeeForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
+                // Add the company logo here
+                Padding(
+                  padding: EdgeInsets.only(bottom: 24.0),
+                  child: Image.asset(
+                    'assets/logo.png',
+                    height: 100,
+                    fit: BoxFit.contain,
+                  ),
+                ),
                 Card(
                   elevation: 4,
                   shape: RoundedRectangleBorder(
@@ -139,8 +148,8 @@ class _EmployeeFormState extends State<EmployeeForm> {
                     child: Text('Guardar', style: TextStyle(fontSize: 18)),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue, // Cambia 'primary' a 'backgroundColor'
-                    foregroundColor: Colors.white, // Cambia 'onPrimary' a 'foregroundColor'
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -337,4 +346,3 @@ class EmployeeListScreen extends StatelessWidget {
     );
   }
 }
-
