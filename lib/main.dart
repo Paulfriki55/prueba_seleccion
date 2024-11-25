@@ -139,8 +139,8 @@ class _EmployeeFormState extends State<EmployeeForm> {
                     child: Text('Guardar', style: TextStyle(fontSize: 18)),
                   ),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.blue,
-                    onPrimary: Colors.white,
+                    backgroundColor: Colors.blue, // Cambia 'primary' a 'backgroundColor'
+                    foregroundColor: Colors.white, // Cambia 'onPrimary' a 'foregroundColor'
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
