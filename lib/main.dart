@@ -18,6 +18,17 @@ class MyApp extends StatelessWidget {
       title: 'Employee Management',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        brightness: Brightness.light,
+        fontFamily: 'Roboto',
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.blue, width: 2.0),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey[300]!, width: 1.0),
+          ),
+        ),
       ),
       home: EmployeeForm(),
     );
@@ -44,98 +55,139 @@ class _EmployeeFormState extends State<EmployeeForm> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Registro de Empleado'),
+        elevation: 0,
+        actions: [
+          Tooltip(
+            message: 'Ver lista de empleados',
+            child: IconButton(
+              icon: Icon(Icons.list),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => EmployeeListScreen()),
+                );
+              },
+            ),
+          ),
+        ],
       ),
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Nombre'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese el nombre';
-                  }
-                  return null;
-                },
-                onSaved: (value) => _name = value!,
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Apellido'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese el apellido';
-                  }
-                  return null;
-                },
-                onSaved: (value) => _lastName = value!,
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'Cédula'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingrese la cédula';
-                  }
-                  return null;
-                },
-                onSaved: (value) => _cedula = value!,
-              ),
-              DropdownButtonFormField<String>(
-                value: _position,
-                decoration: InputDecoration(labelText: 'Cargo'),
-                items: ['Supervisor', 'Líder', 'Operario']
-                    .map((label) => DropdownMenuItem(
-                  child: Text(label),
-                  value: label,
-                ))
-                    .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _position = value!;
-                  });
-                },
-              ),
-              DropdownButtonFormField<String>(
-                value: _area,
-                decoration: InputDecoration(labelText: 'Área'),
-                items: ['Financiera', 'Talento Humano', 'Operaciones']
-                    .map((label) => DropdownMenuItem(
-                  child: Text(label),
-                  value: label,
-                ))
-                    .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _area = value!;
-                  });
-                },
-              ),
-              SizedBox(height: 20),
-              Text('Firma:'),
-              Container(
-                height: 200,
-                child: Signature(
-                  color: Colors.black,
-                  key: _sign,
-                  onSign: () {
-                    final sign = _sign.currentState;
-                    debugPrint('${sign?.points.length} points in signature');
-                  },
-                  backgroundPainter: _WatermarkPaint("2.0", "2.0"),
-                  strokeWidth: 5.0,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.blue[50]!, Colors.white],
+          ),
+        ),
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        _buildTextField('Nombre', (value) => _name = value!),
+                        SizedBox(height: 16),
+                        _buildTextField('Apellido', (value) => _lastName = value!),
+                        SizedBox(height: 16),
+                        _buildTextField('Cédula', (value) => _cedula = value!),
+                        SizedBox(height: 16),
+                        _buildDropdownField('Cargo', _position, ['Supervisor', 'Líder', 'Operario'],
+                                (value) => setState(() => _position = value!)),
+                        SizedBox(height: 16),
+                        _buildDropdownField('Área', _area, ['Financiera', 'Talento Humano', 'Operaciones'],
+                                (value) => setState(() => _area = value!)),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                child: Text('Guardar'),
-                onPressed: _submitForm,
-              ),
-            ],
+                SizedBox(height: 24),
+                Text('Firma:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                SizedBox(height: 8),
+                Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Container(
+                    height: 200,
+                    child: Signature(
+                      color: Colors.black,
+                      key: _sign,
+                      onSign: () {
+                        final sign = _sign.currentState;
+                        debugPrint('${sign?.points.length} points in signature');
+                      },
+                      backgroundPainter: _WatermarkPaint("2.0", "2.0"),
+                      strokeWidth: 5.0,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 24),
+                ElevatedButton(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Text('Guardar', style: TextStyle(fontSize: 18)),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.blue,
+                    onPrimary: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    elevation: 2,
+                  ),
+                  onPressed: _submitForm,
+                ),
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTextField(String label, Function(String?) onSaved) {
+    return TextFormField(
+      decoration: InputDecoration(
+        labelText: label,
+        filled: true,
+        fillColor: Colors.white,
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Por favor ingrese $label';
+        }
+        return null;
+      },
+      onSaved: onSaved,
+    );
+  }
+
+  Widget _buildDropdownField(String label, String value, List<String> items, Function(String?) onChanged) {
+    return DropdownButtonFormField<String>(
+      value: value,
+      decoration: InputDecoration(
+        labelText: label,
+        filled: true,
+        fillColor: Colors.white,
+      ),
+      items: items
+          .map((label) => DropdownMenuItem(
+        child: Text(label),
+        value: label,
+      ))
+          .toList(),
+      onChanged: onChanged,
     );
   }
 
@@ -209,5 +261,80 @@ class _WatermarkPaint extends CustomPainter {
 
   @override
   int get hashCode => price.hashCode ^ watermark.hashCode;
+}
+
+class EmployeeListScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Lista de Empleados'),
+        elevation: 0,
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.blue[50]!, Colors.white],
+          ),
+        ),
+        child: FutureBuilder<List<Map<String, dynamic>>>(
+          future: DatabaseHelper.instance.queryAllRows(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(child: Text('No hay empleados registrados.'));
+            } else {
+              return ListView.builder(
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  var employee = Employee.fromMap(snapshot.data![index]);
+                  return Card(
+                    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ListTile(
+                      contentPadding: EdgeInsets.all(16),
+                      leading: CircleAvatar(
+                        child: Text(employee.name[0] + employee.lastName[0]),
+                        backgroundColor: Colors.blue,
+                        foregroundColor: Colors.white,
+                      ),
+                      title: Text(
+                        '${employee.name} ${employee.lastName}',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 4),
+                          Text('Cédula: ${employee.cedula}'),
+                          Text('Cargo: ${employee.position}'),
+                          Text('Área: ${employee.area}'),
+                        ],
+                      ),
+                      trailing: Icon(Icons.arrow_forward_ios, color: Colors.blue),
+                      onTap: () {
+                        // TODO: Implement employee details view
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Detalles del empleado (por implementar)')),
+                        );
+                      },
+                    ),
+                  );
+                },
+              );
+            }
+          },
+        ),
+      ),
+    );
+  }
 }
 
