@@ -328,7 +328,13 @@ class EmployeeListScreen extends StatelessWidget {
                           Text('Área: ${employee.area}'),
                         ],
                       ),
-                      trailing: Icon(Icons.arrow_forward_ios, color: Colors.blue),
+                      trailing: employee.signature != null
+                          ? Image.memory(
+                        base64Decode(employee.signature),
+                        width: 50,
+                        height: 50,
+                      )
+                          : Icon(Icons.no_photography),
                       onTap: () {
                         // TODO: Implement employee details view
                         ScaffoldMessenger.of(context).showSnackBar(
